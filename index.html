@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>College results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef2f6;--surface:#fff;--ink:#14263b;--muted:#566478;--line:#d3dae4;--tint:#e6edf5;--accent:#1c4f8f;--on:#fff;--hi:#17734a;--mid:#9a5b00;--low:#b82b27;
+  --font:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;--panel:rgba(255,255,255,.9);--scrim:rgba(238,242,246,.4);color-scheme:light;box-sizing:border-box;
+  padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1623;--surface:#16212f;--ink:#e7edf5;--muted:#9aa9bd;--line:#2a384b;--tint:#1d2a3b;--accent:#7db0f0;--on:#0e1623;--hi:#62d19a;--mid:#f0b65c;--low:#ff8f89;--panel:rgba(22,33,47,.88);--scrim:rgba(8,14,24,.55);color-scheme:dark}}
+*,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.5 var(--font)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;transform:scale(1.04);filter:blur(2px);
+  background:linear-gradient(var(--scrim),var(--scrim)),url(background.jpg) center/cover no-repeat}
+.banner{background:#fff;border-bottom:1px solid var(--line)}
+.banner img{display:block;width:100%;max-width:46rem;height:auto;margin:0 auto}
+main{max-width:40rem;margin:1.25rem auto 5rem;padding:1.25rem 1.1rem 2rem;background:var(--panel);border-radius:18px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+@media (max-width:42rem){main{margin-inline:.75rem}}
+header,.bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+header{margin-bottom:1.5rem}
+h1{margin:0;font-size:1.3rem;letter-spacing:-.01em}
+h2{margin:0 0 .4rem;font-size:clamp(1.5rem,5.5vw,2rem);line-height:1.15;letter-spacing:-.015em;overflow-wrap:anywhere}
+#who{display:flex;align-items:center;gap:.6rem;min-width:0}
+#whoName{color:var(--muted);font-size:.9rem;overflow:hidden;text-overflow:ellipsis;max-width:11rem;white-space:nowrap}
+.sub{margin:.1rem 0 1rem;color:var(--muted)}
+.note{padding:.8rem 1rem;border:1px solid var(--low);border-radius:10px;color:var(--low)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.primary{background:var(--accent);color:var(--on);border:0;border-radius:10px;padding:.65rem 1.05rem;font-weight:600}
+.ghost{background:none;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:.55rem .9rem;font-weight:600}
+.danger{background:none;border:0;color:var(--low);font-weight:600;padding:.65rem .25rem;margin-right:auto}
+button:disabled{opacity:.6;cursor:wait}
+.choices{display:grid;gap:.9rem;margin-top:1.25rem}
+.choice{display:block;width:100%;text-align:left;background:var(--surface);color:inherit;border:1px solid var(--line);border-radius:14px;padding:1.2rem 1.1rem}
+.choice:hover{background:var(--tint)}
+.choice b{display:block;font-size:1.35rem;margin-bottom:.15rem}
+.choice span{color:var(--muted)}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 1rem;overflow:hidden;margin-top:1rem}
+.cols,.row{display:grid;grid-template-columns:4.75rem 1fr 3.25rem;align-items:center;gap:.75rem}
+.srow{grid-template-columns:1fr 3.25rem}
+.cols{padding:.7rem 0;color:var(--muted);font-size:.875rem;border-bottom:1px solid var(--line)}
+.cols span:last-child{text-align:center}
+ul{list-style:none;margin:0;padding:0}
+li+li{border-top:1px solid var(--line)}
+.row{width:calc(100% + 2rem);margin-inline:-1rem;padding:.8rem 1rem;background:none;border:0;color:inherit;text-align:left}
+button.row:hover{background:var(--tint)}
+.roll{color:var(--muted);font-weight:500;font-size:.9rem;overflow-wrap:anywhere}
+.name{display:block;font-weight:600;overflow-wrap:anywhere}
+.marks{display:block;color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+.stamp{display:grid;place-items:center;width:2.6rem;height:2.6rem;justify-self:center;border-radius:50%;border:2px solid currentColor;
+  box-shadow:0 0 0 3px var(--surface),0 0 0 4px currentColor;font-weight:700;font-size:1.25rem;line-height:1;transform:rotate(-8deg)}
+.g-hi{color:var(--hi)}.g-mid{color:var(--mid)}.g-low{color:var(--low)}.g-none{color:var(--muted)}
+.empty{padding:2.5rem 1rem;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-size:1.15rem;margin-bottom:.25rem}
+.pwbox{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem .75rem;padding:.75rem 1rem;margin-bottom:1rem;border:1px dashed var(--line);border-radius:12px}
+.pwbox b{font-size:1.15rem;letter-spacing:.08em;user-select:all;font-variant-numeric:tabular-nums}
+.pwbox small{flex-basis:100%;color:var(--muted)}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;padding:.9rem .5rem;border:1px solid var(--line);border-radius:14px;text-align:center}
+.summary>div{display:grid;gap:.3rem;justify-items:center;align-content:center}
+.fig{font-size:1.6rem;font-weight:700;line-height:1.2;font-variant-numeric:tabular-nums}
+.cap{color:var(--muted);font-size:.85rem}
+.foot{margin:1.5rem .25rem 0;color:var(--muted);font-size:.85rem}
+dialog{width:min(26rem,calc(100vw - 2rem));max-height:calc(100dvh - 2rem);border:0;border-radius:16px;padding:1.25rem;background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(8,14,24,.55)}
+dialog h2{font-size:1.35rem;margin-bottom:1rem}
+.field{display:block;margin-bottom:.9rem}
+.field>span{display:block;font-weight:600;margin-bottom:.3rem}
+input{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.65rem .75rem}
+input:disabled{background:var(--tint);color:var(--muted)}
+input[aria-invalid="true"]{border-color:var(--low)}
+.err{display:block;margin-top:.3rem;color:var(--low);font-size:.9rem}
+.err:empty{display:none}
+.preview{display:flex;align-items:center;gap:1rem;margin:1rem .25rem .25rem;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:flex-end;margin-top:1.1rem}
+.actions.left{justify-content:flex-start}
+.trow{display:flex;align-items:center;justify-content:space-between;gap:.75rem;padding:.7rem 0}
+.tmail{overflow-wrap:anywhere}
+#toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);
+  padding:.6rem 1rem;border-radius:10px;max-width:calc(100vw - 2rem);opacity:0;pointer-events:none;transition:opacity .15s}
+#toast.on{opacity:1}
+</style>
+<script>
+// ====== STEP 1: paste your Firebase web app config here (Firebase console > Project settings > Your apps) ======
+const firebaseConfig = {
+  apiKey: "AIzaSyBBBmHgy4cBL1BhP1q59-b2mfy8gGy9bmo",
+  authDomain: "student-result-c8b90.firebaseapp.com",
+  projectId: "student-result-c8b90",
+  storageBucket: "student-result-c8b90.firebasestorage.app",
+  messagingSenderId: "785627669977",
+  appId: "1:785627669977:web:147fc991138d375a2225c8"
+};
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<div class="banner"><img src="header.jpg" alt="Madhav Institute of Technology &amp; Science, Gwalior. Deemed to be University, NAAC accredited with A++ grade"></div>
+<main>
+  <header>
+    <h1>College results</h1>
+    <div id="who" hidden><span id="whoName"></span><button id="outBtn" class="ghost" type="button">Sign out</button></div>
+  </header>
+
+  <section id="vSetup" hidden><h2>Firebase isn’t set up yet</h2><p id="setupMsg" class="sub"></p></section>
+
+  <section id="vHome" hidden>
+    <h2>Who’s signing in?</h2>
+    <div class="choices">
+      <button id="teacherChoice" class="choice" type="button"><b>Teacher</b><span>Sign in with Google to add students and enter marks.</span></button>
+      <button id="studentChoice" class="choice" type="button"><b>Student</b><span>Sign in with your college ID to see your result.</span></button>
+    </div>
+  </section>
+
+  <section id="vTLogin" hidden>
+    <h2>Teacher sign-in</h2>
+    <p class="sub">Use the Google account your college has approved.</p>
+    <div class="actions left"><button id="googleBtn" class="primary" type="button">Continue with Google</button><button class="ghost back" type="button">Back</button></div>
+  </section>
+
+  <section id="vSLogin" hidden>
+    <h2>Student sign-in</h2>
+    <p class="sub">Enter your college ID and the password your teacher gave you.</p>
+    <label class="field"><span>College ID</span><input id="sIdIn" autocomplete="off" autocapitalize="off"><small class="err" id="sIdErr"></small></label>
+    <label class="field"><span>Password</span><input id="sPwIn" type="password" autocomplete="off"><small class="err" id="sPwErr"></small></label>
+    <div class="actions left"><button id="sBtn" class="primary" type="button">Show my result</button><button class="ghost back" type="button">Back</button></div>
+  </section>
+
+  <section id="vList" hidden>
+    <div class="bar"><div><h2>Students</h2><p id="count" class="sub"></p></div><div class="actions" style="margin:0"><button id="teachersBtn" class="ghost" type="button" hidden>Teachers</button><button id="addBtn" class="primary" type="button">Add student</button></div></div>
+    <p id="listErr" class="note" hidden></p>
+    <div id="sheet" class="sheet"><div class="cols"><span>College ID</span><span>Student and CGPA</span><span>Grade</span></div><ul id="list"></ul></div>
+    <div id="empty" class="empty" hidden><strong>No students yet</strong>Add the first student, then add their subjects.</div>
+  </section>
+
+  <section id="vTeachers" hidden>
+    <p style="margin:0 0 1rem"><button id="tchBack" class="ghost" type="button">All students</button></p>
+    <h2>Teachers</h2>
+    <p class="sub">Only approved teachers can manage students. You are the admin.</p>
+    <label class="field"><span>Teacher’s Google email</span><input id="tEmailIn" type="email" autocomplete="off" autocapitalize="off"><small class="err" id="tEmailErr"></small></label>
+    <div class="actions left" style="margin-top:0"><button id="approveBtn" class="primary" type="button">Approve teacher</button></div>
+    <div id="tchSheet" class="sheet"><ul id="tchList"></ul></div>
+    <p id="tchEmpty" class="sub" style="margin-top:1rem">No teachers approved yet.</p>
+  </section>
+
+  <section id="vDetail" hidden>
+    <p id="tBack" style="margin:0 0 1rem"><button id="backBtn" class="ghost" type="button">All students</button></p>
+    <h2 id="dName"></h2>
+    <p id="dId" class="sub"></p>
+    <div id="pwBox" class="pwbox">
+      <span>Student password</span><b id="pw"></b>
+      <button id="copyBtn" class="ghost" type="button">Copy</button><button id="newPw" class="ghost" type="button">New password</button>
+      <small>Give this to the student. If they have changed it themselves, this no longer works; use New password to reset it.</small>
+    </div>
+    <div class="summary">
+      <div><span id="fCgpa" class="fig">–</span><span class="cap">CGPA</span></div>
+      <div><span id="fAvg" class="fig">–</span><span class="cap">Average marks</span></div>
+      <div><span id="fGrade" class="stamp g-none">–</span><span class="cap">Overall grade</span></div>
+    </div>
+    <div id="subSheet" class="sheet"><ul id="subList"></ul></div>
+    <p id="subEmpty" class="sub" style="margin-top:1rem"></p>
+    <div id="tActions" class="actions"><button id="editStu" class="ghost" type="button">Edit student</button><button id="addSub" class="primary" type="button">Add subject</button></div>
+    <div id="sActions" class="actions" hidden><button id="chgPw" class="ghost" type="button">Change password</button></div>
+  </section>
+
+  <p id="rule" class="foot"></p>
+</main>
+
+<dialog id="stuDlg" aria-labelledby="stuTitle">
+  <h2 id="stuTitle">Add student</h2>
+  <label class="field"><span>College ID</span><input id="idIn" autocomplete="off" autocapitalize="off"><small class="err" id="idErr"></small></label>
+  <label class="field"><span>Name</span><input id="nameIn" autocomplete="off" maxlength="80"><small class="err" id="nameErr"></small></label>
+  <div class="actions">
+    <button id="delStu" class="danger" type="button">Delete student</button>
+    <button id="cancelStu" class="ghost" type="button">Cancel</button>
+    <button id="saveStu" class="primary" type="button">Add student</button>
+  </div>
+</dialog>
+
+<dialog id="subDlg" aria-labelledby="subTitle">
+  <h2 id="subTitle">Add subject</h2>
+  <label class="field"><span>Subject name</span><input id="subNameIn" autocomplete="off" maxlength="60"><small class="err" id="subNameErr"></small></label>
+  <label class="field"><span>Marks (0 to 100)</span><input id="subMarksIn" inputmode="decimal" autocomplete="off"><small class="err" id="subMarksErr"></small></label>
+  <div class="preview"><span id="subPreview" class="stamp g-none">–</span><span>Grade for these marks</span></div>
+  <div class="actions">
+    <button id="delSub" class="danger" type="button">Delete subject</button>
+    <button id="cancelSub" class="ghost" type="button">Cancel</button>
+    <button id="saveSub" class="primary" type="button">Add subject</button>
+  </div>
+</dialog>
+
+<dialog id="pwDlg" aria-labelledby="pwTitle">
+  <h2 id="pwTitle">Change password</h2>
+  <label class="field"><span>New password</span><input id="newPwIn" type="password" autocomplete="new-password"><small class="err" id="newPwErr"></small></label>
+  <label class="field"><span>Confirm new password</span><input id="cfmPwIn" type="password" autocomplete="new-password"><small class="err" id="cfmPwErr"></small></label>
+  <p class="sub" style="margin:0">Use 8 to 30 letters or numbers.</p>
+  <div class="actions">
+    <button id="cancelPw" class="ghost" type="button">Cancel</button>
+    <button id="savePw" class="primary" type="button">Change password</button>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  // [lowest marks, grade, grade point]; below 40 is F with 0 points.
+  const SCALE = [[90, 'A', 10], [80, 'B', 9], [70, 'C', 8], [60, 'D', 7], [40, 'E', 5]];
+  const band = m => SCALE.find(b => m >= b[0]) || [0, 'F', 0];
+  const gradeOf = m => band(m)[1];
+  const tier = g => 'AB'.includes(g) ? 'g-hi' : 'CD'.includes(g) ? 'g-mid' : 'g-low';
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+  const ID_RE = /^[a-z0-9][a-z0-9.-]{1,29}$/;
+  const ALPHA = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';  // 32 characters, no look-alikes
+  function genCode() {
+    const a = new Uint32Array(8);
+    crypto.getRandomValues(a);
+    return Array.from(a, n => ALPHA[n % 32]).join('');
+  }
+  function genToken() {
+    const a = new Uint32Array(20);
+    crypto.getRandomValues(a);
+    return Array.from(a, n => ALPHA[n % 32]).join('');
+  }
+  function parseMarks(text) {
+    const t = text.trim();
+    if (!t || !/^[0-9.+-]+$/.test(t)) return null;
+    const v = Number(t);
+    if (!Number.isFinite(v) || v < 0 || v > 100) return null;
+    const r = Math.round(v * 100) / 100;
+    return r === 0 ? 0 : r;
+  }
+  // CGPA = average of the subjects' grade points. Overall grade comes from the average marks.
+  function stats(s) {
+    const n = s.subjects.length;
+    if (!n) return null;
+    const avg = Math.round(s.subjects.reduce((t, x) => t + x.marks, 0) / n * 100) / 100;
+    return { n, avg, cgpa: s.subjects.reduce((t, x) => t + band(x.marks)[2], 0) / n, grade: gradeOf(avg) };
+  }
+
+  // ---------- Small UI helpers ----------
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text !== undefined) n.textContent = text;
+    return n;
+  }
+  function setStamp(node, grade) {
+    node.textContent = grade || '–';
+    node.className = 'stamp ' + (grade ? tier(grade) : 'g-none');
+  }
+  function show(v) {
+    for (const s of document.querySelectorAll('main>section')) s.hidden = s.id !== 'v' + v;
+  }
+  let toastTimer;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('on');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('on'), 3000);
+  }
+  function showErrors(fields, errs) {
+    for (const k of fields) {
+      $(k + 'Err').textContent = errs[k] || '';
+      $(k + 'In').setAttribute('aria-invalid', errs[k] ? 'true' : 'false');
+    }
+    const first = fields.find(k => errs[k]);
+    if (first) $(first + 'In').focus();
+  }
+  const hasErrors = errs => Object.keys(errs).length > 0;
+  const onEnter = (node, fn) => node.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); fn(); }
+  });
+
+  $('rule').textContent = 'Grades: ' + SCALE.map(b => `${b[1]} ${b[0]}+`).join(', ') +
+    ', F below 40. CGPA is the average of the subjects’ grade points (' +
+    SCALE.map(b => `${b[1]} ${b[2]}`).join(', ') + ', F 0).';
+  document.querySelectorAll('.back').forEach(b => { b.onclick = () => show('Home'); });
+
+  // ---------- Firebase ----------
+  const cfg = typeof firebaseConfig === 'undefined' ? {} : firebaseConfig;
+  if (!window.firebase || !cfg.apiKey || /^YOUR_/.test(cfg.apiKey)) {
+    $('setupMsg').textContent = window.firebase
+      ? 'Open this file in a text editor, paste your Firebase config into the firebaseConfig block at the top, and upload the file again.'
+      : 'Couldn’t load Firebase. Check your internet connection and reload.';
+    show('Setup');
+    return;
+  }
+  firebase.initializeApp(cfg);
+  const auth = firebase.auth(), db = firebase.firestore();
+
+  let role = null, students = [], cur = null, result = null, unsub = null, teachers = [], unsubT = null;
+  let editing = null, editingSub = null, justAdded = null;
+  const current = () => role === 'teacher' ? students.find(s => s.id === cur) : result;
+
+  // Runs a Firestore write; the screen already shows the change, so only failures need a message.
+  function run(fn, okMsg) {
+    Promise.resolve().then(fn).then(() => toast(okMsg), () => toast('Couldn’t save. Check your connection and that this account is approved.'));
+  }
+  // students/{id}: full record, teacher only.
+  // results/{token}: what the student sees; the token is random and only a login record reveals it.
+  // logins/{id}_{password}: points to the token. A student can swap theirs for a new password.
+  function write(id, s) {
+    if (!s.token) throw new Error('old record');  // made before password change existed: delete and add again
+    const b = db.batch();
+    b.set(db.doc(`students/${id}`), { name: s.name, code: s.code, token: s.token, subjects: s.subjects });
+    b.set(db.doc(`results/${s.token}`), { id, name: s.name, subjects: s.subjects });
+    return b.commit();
+  }
+  function addStudent(id, name) {
+    const s = { name, code: genCode(), token: genToken(), subjects: [] };
+    const b = db.batch();
+    b.set(db.doc(`students/${id}`), s);
+    b.set(db.doc(`results/${s.token}`), { id, name, subjects: [] });
+    b.set(db.doc(`logins/${id}_${s.code}`), { id, token: s.token });
+    return b.commit();
+  }
+  async function resetPassword(id, s) {
+    const code = genCode(), b = db.batch();
+    (await db.collection('logins').where('id', '==', id).get()).forEach(d => b.delete(d.ref));
+    b.set(db.doc(`logins/${id}_${code}`), { id, token: s.token });
+    b.update(db.doc(`students/${id}`), { code });
+    await b.commit();
+  }
+  async function remove(id, s) {
+    const b = db.batch();
+    (await db.collection('logins').where('id', '==', id).get()).forEach(d => b.delete(d.ref));
+    b.delete(db.doc(`students/${id}`));
+    if (s.token) b.delete(db.doc(`results/${s.token}`));
+    await b.commit();
+  }
+
+  // ---------- Sign-in state ----------
+  function stop() {
+    if (unsub) { unsub(); unsub = null; }
+    if (unsubT) { unsubT(); unsubT = null; }
+    students = []; teachers = [];
+  }
+  function watch() {
+    stop();
+    $('listErr').hidden = true;
+    $('addBtn').hidden = false;
+    $('teachersBtn').hidden = true;
+    // Only the admin is allowed to read this list, so a successful read means this user is the admin.
+    unsubT = db.collection('teachers').onSnapshot(snap => {
+      teachers = snap.docs.map(d => d.id).sort();
+      $('teachersBtn').hidden = false;
+      renderTeachers();
+    }, () => { $('teachersBtn').hidden = true; });
+    unsub = db.collection('students').onSnapshot(snap => {
+      students = snap.docs.map(d => Object.assign({ id: d.id, subjects: [] }, d.data()));
+      renderList();
+      if (role === 'teacher' && !$('vDetail').hidden) {
+        if (current()) { justAdded = null; renderDetail(); }
+        else if (cur !== justAdded) show('List');
+      }
+    }, err => {
+      $('listErr').hidden = false;
+      const denied = err.code === 'permission-denied';
+      $('addBtn').hidden = denied;
+      $('listErr').textContent = denied
+        ? 'This account isn’t approved yet. Ask the admin to approve ' + $('whoName').textContent + ', then reload this page.'
+        : 'Couldn’t load students. Check your internet connection.';
+      renderList();
+    });
+  }
+  auth.onAuthStateChanged(u => {
+    if (u) {
+      role = 'teacher';
+      $('who').hidden = false;
+      $('whoName').textContent = u.email || 'Teacher';
+      show('List');
+      watch();
+    } else if (role !== 'student') {
+      stop();
+      role = null;
+      $('who').hidden = true;
+      show('Home');
+    }
+  });
+  $('outBtn').onclick = () => {
+    if (role === 'teacher') { auth.signOut(); return; }
+    result = null; role = null;
+    $('who').hidden = true;
+    $('sIdIn').value = ''; $('sPwIn').value = '';
+    show('Home');
+  };
+  $('teacherChoice').onclick = () => show('TLogin');
+  $('studentChoice').onclick = () => show('SLogin');
+  $('googleBtn').onclick = async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try { await auth.signInWithPopup(provider); }
+    catch (e) {
+      if (e.code === 'auth/popup-blocked') auth.signInWithRedirect(provider);
+      else if (e.code === 'auth/unauthorized-domain') toast('Add this website’s domain to Authorized domains in Firebase.');
+      else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') toast('Couldn’t sign in with Google. Try again.');
+    }
+  };
+
+  // ---------- Student sign-in ----------
+  async function studentLogin() {
+    const id = $('sIdIn').value.trim().toLowerCase(), pw = $('sPwIn').value.trim(), errs = {};
+    if (!ID_RE.test(id)) errs.sId = 'Enter your college ID.';
+    if (!/^[A-Za-z0-9]{8,30}$/.test(pw)) errs.sPw = 'Enter your password (8 to 30 letters or numbers).';
+    showErrors(['sId', 'sPw'], errs);
+    if (hasErrors(errs)) return;
+    $('sBtn').disabled = true;
+    try {
+      // Passwords made by the app are in capitals, so also try the capitals version of what was typed.
+      let lid = null, login = null;
+      for (const p of new Set([pw, pw.toUpperCase()])) {
+        const d = await db.doc(`logins/${id}_${p}`).get();
+        if (d.exists) { lid = `${id}_${p}`; login = d.data(); break; }
+      }
+      const r = login ? await db.doc(`results/${login.token}`).get() : null;
+      if (!r || !r.exists) {
+        showErrors(['sId', 'sPw'], { sPw: 'College ID or password is wrong.' });
+      } else {
+        result = { id, lid, token: login.token, name: r.data().name, subjects: r.data().subjects || [] };
+        role = 'student';
+        $('who').hidden = false;
+        $('whoName').textContent = result.name;
+        show('Detail');
+        renderDetail();
+      }
+    } catch (e) { toast('Couldn’t load your result. Check your internet connection.'); }
+    $('sBtn').disabled = false;
+  }
+  $('sBtn').onclick = studentLogin;
+  onEnter($('vSLogin'), studentLogin);
+
+  // ---------- Student: change own password ----------
+  const pwDlg = $('pwDlg');
+  $('chgPw').onclick = () => {
+    $('newPwIn').value = $('cfmPwIn').value = '';
+    showErrors(['newPw', 'cfmPw'], {});
+    pwDlg.showModal();
+  };
+  $('cancelPw').onclick = () => pwDlg.close();
+  async function changePassword() {
+    const pw = $('newPwIn').value.trim(), errs = {};
+    if (!/^[A-Za-z0-9]{8,30}$/.test(pw)) errs.newPw = 'Use 8 to 30 letters or numbers.';
+    else if (`${result.id}_${pw}` === result.lid) errs.newPw = 'Choose a different password.';
+    else if ($('cfmPwIn').value.trim() !== pw) errs.cfmPw = 'The two passwords don’t match.';
+    showErrors(['newPw', 'cfmPw'], errs);
+    if (hasErrors(errs)) return;
+    const lid = `${result.id}_${pw}`;
+    $('savePw').disabled = true;
+    try {
+      const b = db.batch();
+      b.set(db.doc(`logins/${lid}`), { id: result.id, token: result.token, prev: result.lid });
+      b.delete(db.doc(`logins/${result.lid}`));
+      await b.commit();
+      result.lid = lid;
+      pwDlg.close();
+      toast('Password changed. Use the new one next time.');
+    } catch (e) { toast('Couldn’t change the password. Check your connection and try again.'); }
+    $('savePw').disabled = false;
+  }
+  $('savePw').onclick = changePassword;
+  onEnter(pwDlg, changePassword);
+
+  // ---------- Admin: approve teachers ----------
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  function renderTeachers() {
+    const list = $('tchList');
+    list.replaceChildren();
+    for (const mail of teachers) {
+      const row = el('div', 'trow');
+      const b = el('button', 'danger', 'Remove');
+      b.type = 'button';
+      b.style.margin = '0';
+      b.onclick = () => {
+        if (confirm(`Remove ${mail}? They won’t be able to manage students any more.`))
+          run(() => db.doc('teachers/' + mail).delete(), 'Teacher removed.');
+      };
+      row.append(el('span', 'tmail', mail), b);
+      const li = el('li');
+      li.append(row);
+      list.append(li);
+    }
+    $('tchSheet').hidden = teachers.length === 0;
+    $('tchEmpty').hidden = teachers.length > 0;
+  }
+  function approveTeacher() {
+    const mail = $('tEmailIn').value.trim().toLowerCase(), errs = {};
+    if (!EMAIL_RE.test(mail)) errs.tEmail = 'Enter a full email address, like name@gmail.com.';
+    else if (teachers.includes(mail)) errs.tEmail = 'This teacher is already approved.';
+    showErrors(['tEmail'], errs);
+    if (hasErrors(errs)) return;
+    $('tEmailIn').value = '';
+    run(() => db.doc('teachers/' + mail).set({ approvedAt: firebase.firestore.FieldValue.serverTimestamp() }), 'Teacher approved.');
+  }
+  $('teachersBtn').onclick = () => show('Teachers');
+  $('tchBack').onclick = () => show('List');
+  $('approveBtn').onclick = approveTeacher;
+  onEnter($('vTeachers'), approveTeacher);
+
+  // ---------- Teacher: student list ----------
+  function renderList() {
+    const rows = [...students].sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
+    const list = $('list');
+    list.replaceChildren();
+    for (const s of rows) {
+      const st = stats(s);
+      const line = st ? `CGPA ${st.cgpa.toFixed(2)} from ${plural(st.n, 'subject')}` : 'No subjects yet';
+      const b = el('button', 'row');
+      b.type = 'button';
+      b.setAttribute('aria-label', `Open ${s.name}, college ID ${s.id}, ${line}`);
+      const who = el('span');
+      who.append(el('span', 'name', s.name), el('span', 'marks', line));
+      const stamp = el('span', 'stamp');
+      setStamp(stamp, st && st.grade);
+      b.append(el('span', 'roll', s.id), who, stamp);
+      b.onclick = () => { cur = s.id; show('Detail'); renderDetail(); };
+      const li = el('li');
+      li.append(b);
+      list.append(li);
+    }
+    $('sheet').hidden = rows.length === 0;
+    $('empty').hidden = rows.length > 0 || !$('listErr').hidden;
+    $('count').textContent = rows.length ? plural(rows.length, 'student') : '';
+  }
+
+  // ---------- Detail (teacher edits, student only reads) ----------
+  function renderDetail() {
+    const s = current();
+    if (!s) return;
+    const t = role === 'teacher', st = stats(s);
+    $('tBack').hidden = $('pwBox').hidden = $('tActions').hidden = !t;
+    $('sActions').hidden = t;
+    $('dName').textContent = s.name;
+    $('dId').textContent = 'College ID ' + s.id;
+    if (t) $('pw').textContent = s.code;
+    $('fCgpa').textContent = st ? st.cgpa.toFixed(2) : '–';
+    $('fAvg').textContent = st ? st.avg.toFixed(2) : '–';
+    setStamp($('fGrade'), st && st.grade);
+    const list = $('subList');
+    list.replaceChildren();
+    for (const x of s.subjects) {
+      const g = gradeOf(x.marks);
+      const b = el(t ? 'button' : 'div', 'row srow');
+      if (t) { b.type = 'button'; b.setAttribute('aria-label', `Edit ${x.name}, ${x.marks.toFixed(2)} marks, grade ${g}`); b.onclick = () => openSubject(x.id); }
+      const who = el('span');
+      who.append(el('span', 'name', x.name), el('span', 'marks', x.marks.toFixed(2) + ' / 100'));
+      b.append(who, el('span', 'stamp ' + tier(g), g));
+      const li = el('li');
+      li.append(b);
+      list.append(li);
+    }
+    $('subSheet').hidden = s.subjects.length === 0;
+    $('subEmpty').hidden = s.subjects.length > 0;
+    $('subEmpty').textContent = t ? 'No subjects yet. Add one to work out the CGPA.' : 'No subjects have been added yet.';
+  }
+  $('backBtn').onclick = () => { cur = null; show('List'); };
+  $('copyBtn').onclick = async () => {
+    try { await navigator.clipboard.writeText(current().code); toast('Password copied.'); }
+    catch (e) { toast('Couldn’t copy. Select the password and copy it by hand.'); }
+  };
+  $('newPw').onclick = () => {
+    const s = current();
+    if (!s || !confirm('Create a new password? The old one will stop working.')) return;
+    run(() => resetPassword(s.id, s), 'New password created.');
+  };
+
+  // ---------- Teacher: student dialog ----------
+  const stuDlg = $('stuDlg'), subDlg = $('subDlg');
+  function openStudent(edit) {
+    const s = edit ? current() : null;
+    editing = s ? s.id : null;
+    $('stuTitle').textContent = s ? 'Edit student' : 'Add student';
+    $('saveStu').textContent = s ? 'Save changes' : 'Add student';
+    $('delStu').hidden = !s;
+    $('idIn').value = s ? s.id : '';
+    $('idIn').disabled = !!s;
+    $('nameIn').value = s ? s.name : '';
+    showErrors(['id', 'name'], {});
+    stuDlg.showModal();
+  }
+  function saveStudent() {
+    const name = $('nameIn').value.trim(), errs = {};
+    let id = editing;
+    if (editing === null) {
+      id = $('idIn').value.trim().toLowerCase();
+      if (!ID_RE.test(id)) errs.id = 'Use 2 to 30 letters, numbers, dots or dashes.';
+      else if (students.some(s => s.id === id)) errs.id = 'This college ID is already added.';
+    }
+    if (!name) errs.name = 'Enter the student’s name.';
+    showErrors(['id', 'name'], errs);
+    if (hasErrors(errs)) return;
+    stuDlg.close();
+    if (editing === null) {
+      run(() => addStudent(id, name), 'Student added.');
+      cur = justAdded = id;
+      show('Detail');
+      renderDetail();
+    } else {
+      const s = current();
+      run(() => write(id, Object.assign({}, s, { name }), s.code), 'Changes saved.');
+    }
+  }
+  $('addBtn').onclick = () => openStudent(false);
+  $('editStu').onclick = () => openStudent(true);
+  $('cancelStu').onclick = () => stuDlg.close();
+  $('saveStu').onclick = saveStudent;
+  onEnter(stuDlg, saveStudent);
+  $('delStu').onclick = () => {
+    const s = current();
+    if (!s || !confirm(`Delete ${s.name} (college ID ${s.id}) and all their subjects? This can’t be undone.`)) return;
+    stuDlg.close();
+    cur = null;
+    show('List');
+    run(() => remove(s.id, s), 'Student deleted.');
+  };
+
+  // ---------- Teacher: subject dialog ----------
+  function updatePreview() {
+    const m = parseMarks($('subMarksIn').value);
+    setStamp($('subPreview'), m === null ? null : gradeOf(m));
+  }
+  function openSubject(id) {
+    const s = current(), sub = id == null ? null : s.subjects.find(x => x.id === id);
+    editingSub = sub ? sub.id : null;
+    $('subTitle').textContent = sub ? 'Edit subject' : 'Add subject';
+    $('saveSub').textContent = sub ? 'Save changes' : 'Add subject';
+    $('delSub').hidden = !sub;
+    $('subNameIn').value = sub ? sub.name : '';
+    $('subMarksIn').value = sub ? sub.marks.toFixed(2) : '';
+    showErrors(['subName', 'subMarks'], {});
+    updatePreview();
+    subDlg.showModal();
+  }
+  function saveSubject() {
+    const s = current();
+    if (!s) return;
+    const name = $('subNameIn').value.trim(), marks = parseMarks($('subMarksIn').value), errs = {};
+    if (!name) errs.subName = 'Enter the subject name.';
+    else if (s.subjects.some(x => x.id !== editingSub && x.name.toLowerCase() === name.toLowerCase())) errs.subName = 'This subject is already added.';
+    if (marks === null) errs.subMarks = 'Enter marks as a number from 0 to 100.';
+    showErrors(['subName', 'subMarks'], errs);
+    if (hasErrors(errs)) return;
+    const adding = editingSub === null;
+    const subjects = adding
+      ? [...s.subjects, { id: newId(), name, marks }]
+      : s.subjects.map(x => x.id === editingSub ? { id: x.id, name, marks } : x);
+    subDlg.close();
+    run(() => write(s.id, Object.assign({}, s, { subjects }), s.code), adding ? 'Subject added.' : 'Changes saved.');
+  }
+  $('addSub').onclick = () => openSubject(null);
+  $('cancelSub').onclick = () => subDlg.close();
+  $('saveSub').onclick = saveSubject;
+  $('subMarksIn').oninput = updatePreview;
+  onEnter(subDlg, saveSubject);
+  $('delSub').onclick = () => {
+    const s = current(), x = s && s.subjects.find(y => y.id === editingSub);
+    if (!x || !confirm(`Delete ${x.name} from ${s.name}? This can’t be undone.`)) return;
+    subDlg.close();
+    run(() => write(s.id, Object.assign({}, s, { subjects: s.subjects.filter(y => y.id !== editingSub) }), s.code), 'Subject deleted.');
+  };
+})();
+</script>
+</body>
+</html>
