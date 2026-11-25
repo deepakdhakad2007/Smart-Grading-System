@@ -1,1 +1,0 @@
-# Smart-Grading-System
